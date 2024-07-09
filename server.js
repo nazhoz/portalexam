@@ -2,15 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-// import { db } from './config/db.js';
-
-dotenv.config();
+import { db } from './config/db.js';
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = 5000;
 
 app.use(cors());
+
 app.use(express.json());
 
 // User Registration
@@ -34,7 +32,7 @@ app.post('/login', (req, res) => {
         const passwordIsValid = bcrypt.compareSync(password, user.password);
         if (!passwordIsValid) return res.status(401).send({ token: null });
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: 86400 });
+        const token = jwt.sign({ id: user.id }, 'secretkey', { expiresIn: 86400 });
         res.status(200).send({ token });
     });
 });
@@ -57,6 +55,7 @@ app.get('/getquestions', (req, res) => {
     });
 });
 
+
 // Submit Results
 app.post('/submit', (req, res) => {
     const { userId, score } = req.body;
@@ -66,20 +65,7 @@ app.post('/submit', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`Server running on ${port}`);
-});
 
-import mysql from 'mysql2';
-
-export const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
-
-db.connect(err => {
-    if (err) throw err;
-    console.log("Database Connected");
+app.listen(port, ()=>{
+    console.log(`Server running on ${port}`)
 });
