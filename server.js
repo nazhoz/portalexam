@@ -3,6 +3,7 @@ import cors from 'cors';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { db } from './config/db.js';
+import serverless from "serverless-http";
 
 const app = express();
 const port = 5000;
@@ -69,3 +70,6 @@ app.post('/submit', (req, res) => {
 app.listen(port, ()=>{
     console.log(`Server running on ${port}`)
 });
+
+app.use("/.netlify/functions/app", router);
+module.exports.handler = serverless(app);
